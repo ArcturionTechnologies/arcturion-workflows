@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "arcturion-workflows"
+version = "0.1.0"
+description = "n8n workflows as code: find by name, update or create, schedule/webhook/manual triggers, dry run by default"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Arcturion Technologies"}]
+
+[project.scripts]
+arcturion-workflows = "arcturion_workflows.cli:main"
+
+[tool.setuptools]
+packages = ["arcturion_workflows"]

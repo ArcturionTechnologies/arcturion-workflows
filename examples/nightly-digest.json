@@ -1,0 +1,35 @@
+{
+  "name": "Example Nightly Digest",
+  "timezone": "UTC",
+  "dry_run": true,
+  "triggers": {
+    "manual": true,
+    "schedule": { "cron": "0 2 * * *" },
+    "webhook": { "path": "example-nightly-digest", "method": "GET" }
+  },
+  "credentials": {
+    "shim": { "type": "httpHeaderAuth", "name": "Local shim (header auth)", "id_env": "N8N_CRED_SHIM_ID" },
+    "notify": { "type": "telegramApi", "name": "Notifier bot", "id_env": "N8N_CRED_NOTIFY_ID" }
+  },
+  "steps": [
+    {
+      "name": "Get Status",
+      "type": "http",
+      "url": "http://127.0.0.1:5691/status",
+      "credential": "shim",
+      "timeout_ms": 30000
+    },
+    {
+      "name": "Render Summary",
+      "type": "code",
+      "js": "// DRY_RUN is filled in at build time from the spec.\nconst DRY_RUN = __DRY_RUN__;\nconst d = $input.first().json;\nconst mode = DRY_RUN ? 'DRY RUN, nothing sent' : 'delivered';\nreturn [{ json: { text: `Nightly digest (${mode})\\n${d.summary || 'no data'}` } }];"
+    },
+    {
+      "name": "Notify",
+      "type": "telegram",
+      "chat_id_env": "N8N_NOTIFY_CHAT_ID",
+      "text": "={{ $json.text }}",
+      "credential": "notify"
+    }
+  ]
+}

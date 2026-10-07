@@ -1,0 +1,21 @@
+{
+  "name": "Example Webhook Echo",
+  "dry_run": true,
+  "triggers": {
+    "webhook": { "path": "example-webhook-echo", "method": "POST" }
+  },
+  "steps": [
+    {
+      "name": "Shape Payload",
+      "type": "code",
+      "js": "return [{ json: { received: $input.first().json, dry_run: __DRY_RUN__ } }];"
+    },
+    {
+      "name": "Forward To Local Service",
+      "type": "http",
+      "method": "POST",
+      "url": "${LOCAL_SERVICE_URL}/ingest",
+      "json_body": "={{ JSON.stringify($json) }}"
+    }
+  ]
+}
